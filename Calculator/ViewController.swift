@@ -8,18 +8,65 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController
+{
+    @IBOutlet weak var display: UILabel!
+    
+    var userIsInTheMIddleOfTpyingANumber = false
+    
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    @IBAction func appendDigit(sender: UIButton)
+    {
+        let digit = sender.currentTitle!
+        if userIsInTheMIddleOfTpyingANumber
+        {
+        display.text = display.text! + digit
+        }
+        else
+        {display.text = digit
+        userIsInTheMIddleOfTpyingANumber = true}
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    @IBAction func operate(sender: UIButton) {
+        let operation = sender.currentTitle!
+        if userIsInTheMIddleOfTpyingANumber {
+            enter()
+        }
+        switch operation {
+            case "×":
+                if operandStack.count >= 2 {
+            displayValue = operandStack.removeLast() * operandStack.removeLast()
+                    enter()
+            }
+//            case "÷":
+//            case "+":
+//            case "-":
+            default: break
+        }
     }
+    func performOperation(operation: (Double, Double) -> Double) {
+        if operandStack.count >= 2 {
+            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
+            enter()
+        }
+    }
+    
+    var operandStack = Array<Double>()
 
-
+    @IBAction func enter() {
+        userIsInTheMIddleOfTpyingANumber = false
+        operandStack.append(displayValue)
+        println("operandStack = \(operandStack)")
+    }
+    
+    var displayValue: Double {
+        get{
+        return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+        }
+        set{
+            display.text = "\(newValue)"
+            userIsInTheMIddleOfTpyingANumber = false
+            }
+    }
 }
 
